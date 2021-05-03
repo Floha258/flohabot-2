@@ -1,0 +1,34 @@
+{
+  "name": "flohabot",
+  "version": "2.0.0",
+  "description": "Twitch/Discord bot based on cj07's ceejus",
+  "main": "main.js",
+  "scripts": {
+    "run": "node src/main.js",
+    "twitch": "node src/twitch/TwitchBot.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint --max-warnings 0 \"src/**/*.js\" \"*.js\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/floh258/flohabot-2.git"
+  },
+  "author": "Floha258",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/floha258/flohabot-2/issues"
+  },
+  "homepage": "https://github.com/floha258/flohabot-2#readme",
+  "dependencies": {
+    "better-sqlite3": "^7.1.2",
+    "discord.js": "^12.5.1",
+    "dotenv": "^8.2.0",
+    "tmi.js": "^1.7.5"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.2.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1"
+  }
+}
