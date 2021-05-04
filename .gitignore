@@ -105,3 +105,6 @@ dist
 
 # Databases
 *.db
+
+#idea stuff
+.idea/

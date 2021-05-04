@@ -29,7 +29,7 @@ class QuotesBot {
         
         if (quoteCommand === 'add') {
             const quote = messageParts.slice(1).join(' ');
-            const addData = this.db.prepare('insert into `quotes` (`quote_text`, quotedOn) values (?, ?)')
+            const addData = this.db.prepare('insert into `quotes` (`quote_text`, `creation_date`) values (?, ?)')
                 .run(quote, GlobalUtils.getTodaysDate());
             return ` successfully added quote #${addData.lastInsertRowid}`;
         }
