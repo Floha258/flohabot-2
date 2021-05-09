@@ -98,9 +98,9 @@ class TwitchBot {
             );
         } else {
             // standard text commands
-            const response = this.db.prepare('select `response` from `commands` where `name`=?').get(commandName);
-            if (response === undefined) return; // invalid command
-            this.client.say(channel, response.output);
+            const output = this.db.prepare('select `response` from `commands` where `name`=?').get(commandName);
+            if (output === undefined) return; // invalid command
+            this.client.say(channel, output.response);
         }
     }
     
