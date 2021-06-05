@@ -78,13 +78,13 @@ class QuotesBot {
                 if (quote === undefined) {
                     return 'no quote with that alias exists';
                 }
-                return `#${quote.id} (${quote.alias}): ${quote.quote_text}`;
+                return `#${quote.id} (${quote.alias}): ${quote.quote_text} ${quote.creation_date}`;
             }
             const quote = this.db.prepare('select * from `quotes` where `id`=?').get(quoteId);
             if (quote === undefined) { // there are no quotes
                 return 'that quote doesn\'t exist';
             }
-            return `#${quote.id}: ${quote.quote_text}`;
+            return `#${quote.id}: ${quote.quote_text} ${quote.creation_date}`;
         }
         // otherwise we pick a random quote from the database
         const quote = this.db.prepare('select * from `quotes` order by random() limit 1').get();
@@ -104,14 +104,7 @@ class QuotesBot {
     }
     
     searchQuote(searchString) {
-        // const quotes = this.db.prepare('select * from quotes where quote like %?%').all(searchString);
-        // if (quotes === undefined) {
-        //     return 'no quotes found';
-        // }
         let returnString = '';
-        // quotes.forEach((quote) => {
-        //     returnString += `${quote.id}, `;
-        // });
         this.db.prepare('select * from `quotes`').all().forEach((quote) => {
             if (quote.quote_text.toLowerCase().includes(searchString.toLowerCase())) {
                 returnString += `#${quote.id}, `;

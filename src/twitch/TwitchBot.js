@@ -74,7 +74,7 @@ class TwitchBot {
             this.db.prepare('update `commands` set `response`=? where `name`=?').run(output, editCommand);
             this.client.say(
                 channel,
-                `@${user.username} command !${editCommand} editted successfully`,
+                `@${user.username} command !${editCommand} edited successfully`,
             );
         } else if (commandName === 'delcmd') {
             if (!isUserMod(user, channel)) return;

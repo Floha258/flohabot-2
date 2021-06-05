@@ -1,21 +1,28 @@
 const Database = require('better-sqlite3');
 const fs = require('fs');
-//const { DiscordBot } = require('./discord/DiscordBot');
-//const { PublicQuotesBot } = require('./twitch/PublicQuotesBot');
-const TwitchBot = require('./twitch/TwitchBot');
+const { DiscordBot } = require('./src/discord/DiscordBot');
+const TwitchBot = require('./src/twitch/TwitchBot');
+const { QuotesCore } = require('./src/modules/quotes/QuotesCore');
 require('dotenv').config();
 
-const db = new Database('bot.db', { verbose: console.log });
+let db;
+if (process.env.testing === 'true') {
+    db = new Database('bot_test.db', { verbose: console.log });
+} else {
+    db = new Database('bot.db');
+}
 
-// set up the databse
+// set up the database
 // the setup script will run everytime the bot starts.
 // Take care that it will not overwrite data and will always work or the bot may not start
 const setupScript = fs.readFileSync('src/dbsetup.sql', 'utf-8');
 db.exec(setupScript);
 
+const quotesCore = new QuotesCore();
+quotesCore.initialize(db);
+
 const twitchBot = new TwitchBot.TwitchBot(db);
-//const publicQuotesBot = new PublicQuotesBot(db);
-//const discordBot = new DiscordBot(db);
+const discordBot = new DiscordBot(db);
 
 // Ensure that the database connection is closed when the process terminates
 process.on('exit', () => db.close());
