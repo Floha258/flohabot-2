@@ -1,5 +1,6 @@
 const { GlobalUtils } = require('../../util/GlobalUtils');
 const { Aliaser } = require('./Aliaser');
+const { QuotesCore } = require('../../modules/quotes/QuotesCore');
 
 /**
  * The shared quotes module across all platforms the bot operates on. All platform bots interact with this module to
@@ -65,7 +66,13 @@ class QuotesBot {
         }
         if (quoteCommand === 'search') {
             const searchString = messageParts.slice(1).join(' ');
-            return this.searchQuote(searchString);
+            const results = QuotesCore.getInstance().searchQuote(searchString);
+            if (!results.includes(',') && results.includes('#')) {
+                // if there is exactly one result and a result was found
+                const quote = QuotesCore.getInstance().getQuote(parseInt(results.slice(1), 10));
+                return `Search result: #${quote.id}: ${quote.quote_text}`;
+            }
+            return results;
         }
         // command is requesting a quote
         console.log(messageParts);
