@@ -81,6 +81,10 @@ class QuotesBot {
             const quoteId = parseInt(quoteLookup, 10);
             if (Number.isNaN(quoteId)) {
                 const alias = messageParts.join(' ');
+                if (alias.toLowerCase() === 'latest') {
+                    let quote = QuotesCore.getInstance().getLatestQuote();
+                    return `#${quote.id}: ${quote.quote_text} ${quote.creation_date}`;
+                }
                 const quote = this.db.prepare('select * from `quotes` where `alias`=?').get(alias);
                 if (quote === undefined) {
                     return 'no quote with that alias exists';

@@ -109,7 +109,7 @@ class DiscordQuotesModule extends BotModule {
                 .setColor('rgba(169,20,56,0.66)')
                 .setAuthor(author)
                 .setTitle(`Quote #${quote.id}`)
-                .setDescription(quote.quote)
+                .setDescription(quote.quote_text)
                 .addFields(
                     { name: 'Quoted on', value: quote.creation_date, inline: true },
                 )
