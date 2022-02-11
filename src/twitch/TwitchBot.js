@@ -96,6 +96,10 @@ class TwitchBot {
                 channel,
                 `@${user.username} ${quoteResponse}`,
             );
+        } else if (commandName === '8ball') {
+            //pass the message on to 8ball to handle
+            const output = this.db.prepare('select * from `eightball` order by random() limit 1').get();
+            this.client.say(channel, `@${user.username} The magic 8-ball says... ${output.response}`);
         } else {
             // standard text commands
             const output = this.db.prepare('select `response` from `commands` where `name`=?').get(commandName);

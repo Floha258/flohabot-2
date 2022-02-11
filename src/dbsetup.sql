@@ -27,3 +27,9 @@ CREATE TABLE if not exists "timedmessages"
     `looptime` INTEGER NOT NULL DEFAULT 0,
     `enabled`  INTEGER NOT NULL DEFAULT 0
 );
+
+CREATE TABLE if not exists "eightball"
+(
+    `id`       INTEGER PRIMARY KEY AUTOINCREMENT,
+    `response` TEXT NOT NULL DEFAULT ''
+);
