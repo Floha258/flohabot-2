@@ -5,6 +5,18 @@ const TwitchBot = require('./src/twitch/TwitchBot');
 const { QuotesCore } = require('./src/modules/quotes/QuotesCore');
 require('dotenv').config();
 
+const express = require('express');
+const bodyParser = require('body-parser');
+const app = express();
+app.use(bodyParser.json({
+    verify: (req, res, buf) => {
+        // expose the raw body of the request for signature verification
+        req.rawBody = buf;
+    },
+}));
+const api = require('./src/api/api.js');
+const port = 3258;
+
 let db;
 if (process.env.testing === 'true') {
     db = new Database('bot_test.db', { verbose: console.log });
@@ -20,6 +32,13 @@ db.exec(setupScript);
 
 const quotesCore = new QuotesCore();
 quotesCore.initialize(db);
+app.set('quotesCore', quotesCore);
+
+app.use('/api', api);
+
+app.listen(port, () => {
+    console.log(`API listening on port ${port}`);
+});
 
 const twitchBot = new TwitchBot.TwitchBot(db);
 const discordBot = new DiscordBot(db);
