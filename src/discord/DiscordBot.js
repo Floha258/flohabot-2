@@ -1,8 +1,9 @@
 const Discord = require('discord.js');
-const { DiscordQuotesModule } = require('./modules/DiscordQuotesModule');
+const {DiscordQuotesModule} = require('./modules/DiscordQuotesModule');
+const ApiFetcher = require('../api/apiFetcher.js');
 
 const prefix = '!';
-const testChannel = '341653040111026187';
+const testChannel = '745285346849456141';
 const version = process.env.VERSION;
 
 /**
@@ -19,6 +20,7 @@ class DiscordBot {
     constructor(db) {
         this.db = db;
         const client = new Discord.Client();
+        this.apiFetcher = new ApiFetcher();
         
         this.testMode = process.env.testing === 'true';
         
@@ -53,7 +55,7 @@ class DiscordBot {
      * @param {*} message The message to handle. Contains all the necessary information for proper handling (comes
      * directly from Discord)
      */
-    handleMessage(message) {
+    async handleMessage(message) {
         if (!message.content.startsWith(prefix) || message.author.bot) return;
         if (this.testMode) {
             if (message.channel.id !== testChannel) {
@@ -66,6 +68,19 @@ class DiscordBot {
         
         if (command === 'quote') {
             message.channel.send(this.quotesModule.handleCommand(args, message.author.username, false));
+        }
+        if (command === 'ceejus') {
+            const quoteResponse = await this.apiFetcher.handleMessage(args);
+            message.channel.send(new Discord.MessageEmbed()
+                .setColor('rgba(169,20,56,0.66)')
+                .setAuthor(quoteResponse.quotedBy)
+                .setTitle(`Quote #${quoteResponse.id}`)
+                .setDescription(quoteResponse.quote)
+                .addFields(
+                    {name: 'Quoted on', value: quoteResponse.quotedOn, inline: true},
+                )
+                .setFooter(`Also known as: ${quoteResponse.alias}`)
+            );
         }
     }
 }

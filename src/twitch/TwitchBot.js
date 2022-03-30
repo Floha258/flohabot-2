@@ -1,7 +1,8 @@
 const tmi = require('tmi.js');
 const fs = require('fs');
 const QuotesBot = require('../modules/quotes/QuotesBot');
-const { isUserMod } = require('./TwitchHelper');
+const ApiFetcher = require('../api/apiFetcher.js');
+const {isUserMod} = require('./TwitchHelper');
 
 /**
  * IRC Chatbot run through Twitch. This serves as the main entry point into the Twitch modules of the bot, but most
@@ -15,6 +16,7 @@ class TwitchBot {
     constructor(db) {
         this.db = db;
         this.quotesBot = new QuotesBot.QuotesBot(db);
+        this.apifetcher = new ApiFetcher();
         
         const opts = {
             identity: {
@@ -40,24 +42,24 @@ class TwitchBot {
      * @param {*} message The message that was sent
      * @param {boolean} self true if the message was sent by the bot
      */
-    onMessageHandler(channel, user, message, self) {
+    async onMessageHandler(channel, user, message, self) {
         if (self) {
             return;
         }
-        
+    
         // TODO: TIMED MESSAGE HANDLING
-        
+    
         let commandName = message.trim();
-        
+    
         if (!commandName.startsWith('!')) {
             // not a command
             // TODO: MODERATION?
             return;
         }
-        
+    
         const commandParts = message.substring(1).split(' ');
         commandName = commandParts[0].toLowerCase();
-        
+    
         if (commandName === 'addcmd') {
             if (!isUserMod(user, channel)) return;
             const newCommand = commandParts[1].toLowerCase();
@@ -96,6 +98,17 @@ class TwitchBot {
                 channel,
                 `@${user.username} ${quoteResponse}`,
             );
+        } else if (commandName === 'ceejus') {
+            const quoteResponse = await this.apifetcher.handleMessage(commandParts.slice(1));
+            console.log(quoteResponse);
+            if (!(quoteResponse.id && quoteResponse.quote && quoteResponse.quotedOn)) {
+                `@${user.username} That quote does not exist!`;
+            } else {
+                this.client.say(
+                    channel,
+                    `@${user.username} #${quoteResponse.id}: ${quoteResponse.quote} ${quoteResponse.quotedOn}`
+                );
+            }
         } else if (commandName === '8ball') {
             //pass the message on to 8ball to handle
             const output = this.db.prepare('select * from `eightball` order by random() limit 1').get();
