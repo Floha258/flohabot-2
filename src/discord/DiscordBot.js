@@ -19,7 +19,7 @@ class DiscordBot {
      */
     constructor(db) {
         this.db = db;
-        const client = new Discord.Client();
+        const client = new Discord.Client({intents: 32767});
         this.apiFetcher = new ApiFetcher();
         
         this.testMode = process.env.testing === 'true';
@@ -67,19 +67,31 @@ class DiscordBot {
         const command = args.shift().toLowerCase();
         
         if (command === 'quote') {
-            message.channel.send(this.quotesModule.handleCommand(args, message.author.username, false));
+            message.reply(
+                {
+                    content: " ",
+                    embeds: [this.quotesModule.handleCommand(args, message.author.username, false)],
+                    allowedMentions: { repliedUser: false }
+                },
+            );
         }
         if (command === 'ceejus') {
             const quoteResponse = await this.apiFetcher.handleMessage(args);
-            message.channel.send(new Discord.MessageEmbed()
-                .setColor('rgba(169,20,56,0.66)')
-                .setAuthor(quoteResponse.quotedBy)
-                .setTitle(`Quote #${quoteResponse.id}`)
-                .setDescription(quoteResponse.quote)
-                .addFields(
-                    {name: 'Quoted on', value: quoteResponse.quotedOn, inline: true},
-                )
-                .setFooter(`Also known as: ${quoteResponse.alias}`)
+            message.reply(
+                {
+                    content: " ",
+                    embeds: [new Discord.MessageEmbed()
+                        .setColor('#8F112F')
+                        .setAuthor('Ceejus Quotes')
+                        .setTitle(`Quote #${quoteResponse.id}`)
+                        .setDescription(quoteResponse.quote)
+                        .addFields(
+                            {name: 'Quoted on', value: quoteResponse.quotedOn, inline: true},
+                            {name: 'Quote by', value: quoteResponse.quotedBy, inline: true}
+                        )
+                        .setFooter(quoteResponse.alias === 'unknown' ? '' : `Also known as: ${quoteResponse.alias}`)],
+                    allowedMentions: { repliedUser: false }
+                }
             );
         }
     }
