@@ -23,7 +23,7 @@ class DiscordQuotesModule extends BotModule {
             const quote = commandParts.slice(1).join(' ');
             const number = QuotesCore.getInstance().addQuote(quote, sender);
             return new Discord.MessageEmbed()
-                .setColor('#a91438a8')
+                .setColor('#a91438')
                 .setAuthor(author)
                 .setTitle(`Added quote #${number}`)
                 .setDescription(quote);
@@ -72,15 +72,6 @@ class DiscordQuotesModule extends BotModule {
                 .setAuthor(author)
                 .setTitle(result);
         }
-        if (quoteCommand === 'info') {
-            const quoteNumber = parseInt(commandParts[1], 10);
-            const results = QuotesCore.getInstance().getQuoteInfo(quoteNumber);
-            return new Discord.MessageEmbed()
-                .setColor('#8F112F')
-                .setAuthor(author)
-                .setTitle(`Quote info for #${quoteNumber}`)
-                .setDescription(results);
-        }
         if (quoteCommand === 'search') {
             const searchString = commandParts.slice(1).join(' ');
             const results = QuotesCore.getInstance().searchQuote(searchString);
@@ -95,7 +86,7 @@ class DiscordQuotesModule extends BotModule {
                     .addFields(
                         { name: 'Quoted on', value: quote.creation_date, inline: true },
                     )
-                    .setFooter(`Also known as: ${quote.alias}`);
+                    .setFooter(quote.alias === 'NONE' ? '' : `Also known as: ${quote.alias}`);
             }
             return new Discord.MessageEmbed()
                 .setColor('#8F112F')
@@ -113,7 +104,7 @@ class DiscordQuotesModule extends BotModule {
                 .addFields(
                     { name: 'Quoted on', value: quote.creation_date, inline: true },
                 )
-                .setFooter(`Also known as: ${quote.alias}`);
+                .setFooter(quote.alias === 'NONE' ? '' : `Also known as: ${quote.alias}`);
         }
         // looking up a quote
         let quote;
