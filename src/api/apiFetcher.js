@@ -40,6 +40,7 @@ class ApiFetcher {
             }
             return quote;
         } catch (error) {
+            console.error(error);
             return this.errorResponse({status: 'No Response'});
         }
         
